@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Otorgar Crédito Agrícola</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <nav class="navbar">
+        <a href="/" class="logo"> Sistema Agrícola ES</a>
+        <ul class="navbar-nav">
+            <li><a href="/">Inicio</a></li>
+            <li><a href="/clientes">Agricultores</a></li>
+            <li><a href="/facturas">Facturación</a></li>
+            <li><a href="/rutas">Rutas</a></li>
+        </ul>
+    </nav>
+
+    <div class="main-container" style="max-width: 600px;">
+        <div class="card">
+            <h2>Otorgar Crédito Agrícola</h2>
+            {% with messages = get_flashed_messages() %}
+              {% if messages %}
+                {% for message in messages %}
+                  <div class="success-msg">{{ message }}</div>
+                {% endfor %}
+              {% endif %}
+            {% endwith %}
+
+            <form method="POST">
+                <label>Seleccionar Agricultor:</label>
+                <select name="cliente_id" required>
+                    <option value="">-- Seleccione agricultor --</option>
+                    {% for cliente in clientes %}
+                        <option value="{{ cliente.id }}">{{ cliente.nombre }} (DUI: {{ cliente.dui }})</option>
+                    {% endfor %}
+                </select>
+
+                <label>Monto del Crédito ($ USD):</label>
+                <input type="number" step="0.01" name="monto" placeholder="Ej. 1500.00" required>
+
+                <button type="submit" class="btn">Aprobar y Registrar Crédito</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

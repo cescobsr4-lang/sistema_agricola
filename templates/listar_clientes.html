@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Gestión de Agricultores</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <nav class="navbar">
+        <a href="/" class="logo">Sistema Agrícola ES</a>
+        <ul class="navbar-nav">
+            <li><a href="/">Inicio</a></li>
+            <li><a href="/clientes" class="active">Agricultores</a></li>
+            <li><a href="/facturas">Facturación</a></li>
+            <li><a href="/rutas">Rutas</a></li>
+            {% if usuario_actual and usuario_actual.es_admin %}
+                <li><a href="/usuarios">Usuarios</a></li>
+            {% endif %}
+            <li><a href="/logout" style="color: #dc2626;">Salir</a></li>
+        </ul>
+    </nav>
+
+    <div class="main-container">
+        <div class="card">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <h2 style="margin: 0;"> Listado de Agricultores Registrados</h2>
+                <a href="/registrar-cliente" class="btn">+ Registrar Agricultor</a>
+            </div>
+
+            {% with messages = get_flashed_messages() %}
+              {% if messages %}
+                {% for message in messages %}
+                  <div class="success-msg">{{ message }}</div>
+                {% endfor %}
+              {% endif %}
+            {% endwith %}
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nombre</th>
+                        <th>DUI</th>
+                        <th>Teléfono</th>
+                        <th>Dirección</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for cliente in clientes %}
+                    <tr>
+                        <td>{{ cliente.id }}</td>
+                        <td><strong>{{ cliente.nombre }}</strong></td>
+                        <td>{{ cliente.dui }}</td>
+                        <td>{{ cliente.telefono or 'N/A' }}</td>
+                        <td>{{ cliente.direccion or 'N/A' }}</td>
+                        <td>
+                            <a href="/cliente/{{ cliente.id }}/facturas" class="btn" style="background-color: #16a34a; padding: 5px 10px; font-size: 12px;">🧾 Facturas</a>
+                            <a href="/editar-cliente/{{ cliente.id }}" class="btn" style="background-color: #d97706; padding: 5px 10px; font-size: 12px;">Editar</a>
+                            {% if usuario_actual and usuario_actual.es_admin %}
+                            <form action="/eliminar-cliente/{{ cliente.id }}" method="POST" style="display:inline;" onsubmit="return confirm('¿Eliminar agricultor y sus relaciones?');">
+                                <button type="submit" class="btn btn-danger" style="padding: 5px 10px; font-size: 12px;">Eliminar</button>
+                            </form>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="6" style="text-align: center; color: #64748b;">No hay agricultores registrados.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>

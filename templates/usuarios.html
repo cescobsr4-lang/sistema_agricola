@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Gestión de Usuarios y Roles</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <nav class="navbar">
+        <a href="/" class="logo"> Sistema Agrícola ES</a>
+        <ul class="navbar-nav">
+            <li><a href="/">Inicio</a></li>
+            <li><a href="/clientes">Agricultores</a></li>
+            <li><a href="/facturas">Facturación</a></li>
+            <li><a href="/rutas">Rutas</a></li>
+            <li><a href="/usuarios" class="active">Usuarios</a></li>
+            <li><a href="/logout" style="color: #dc2626;">Salir</a></li>
+        </ul>
+    </nav>
+
+    <div class="main-container">
+        {% with messages = get_flashed_messages() %}
+          {% if messages %}
+            {% for message in messages %}
+              <div class="success-msg">{{ message }}</div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+
+        <div class="card" style="max-width: 650px;">
+            <h2> Crear Nuevo Usuario del Sistema</h2>
+            <form method="POST">
+                <label>Nombre de la persona (Nombre completo):</label>
+                <input type="text" name="nombre_persona" placeholder="Ej. Carlos Mendoza" required>
+
+                <label>Nombre de usuario (Login):</label>
+                <input type="text" name="username" placeholder="Ej. cmendoza" required>
+
+                <label>Contraseña:</label>
+                <input type="password" name="password" placeholder="Contraseña segura" required>
+
+                <label>Rol / Nivel de acceso:</label>
+                <select name="rol_id" required>
+                    {% for rol in roles %}
+                        <option value="{{ rol.id }}">{{ rol.nombre }} — {{ rol.descripcion }}</option>
+                    {% endfor %}
+                </select>
+
+                <button type="submit" class="btn">Crear Usuario</button>
+            </form>
+        </div>
+
+        <div class="card">
+            <h2>Usuarios y Roles Registrados</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID Usuario</th>
+                        <th>Usuario</th>
+                        <th>Nombre de la Persona</th>
+                        <th>Rol / Nivel de Acceso</th>
+                        <th>Estado</th>
+                        <th>Acción</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for u in usuarios %}
+                    <tr>
+                        <td>{{ u.id }}</td>
+                        <td><strong>{{ u.username }}</strong></td>
+                        <td>{{ u.nombre_persona }}</td>
+                        <td><strong>{{ u.rol.nombre }}</strong></td>
+                        <td>{{ 'Activo' if u.activo else 'Inactivo' }}</td>
+                        <td>
+                            {% if usuario_actual and u.id != usuario_actual.id %}
+                            <form action="/usuarios/{{ u.id }}/toggle-estado" method="POST" style="display:inline;">
+                                <button type="submit" class="btn {% if u.activo %}btn-danger{% endif %}" style="padding: 5px 10px; font-size: 12px;">
+                                    {{ 'Desactivar' if u.activo else 'Activar' }}
+                                </button>
+                            </form>
+                            {% else %}
+                            <span style="color: #64748b; font-size: 12px;">Sesión actual</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>

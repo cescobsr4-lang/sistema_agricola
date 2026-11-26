@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Programar Ruta de Entrega</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        #map { width: 100%; height: 320px; border-radius: 8px; margin-bottom: 20px; border: 1px solid #cbd5e1; }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <a href="/" class="logo">🌱 Sistema Agrícola ES</a>
+        <ul class="navbar-nav">
+            <li><a href="/">Inicio</a></li>
+            <li><a href="/clientes">Agricultores</a></li>
+            <li><a href="/facturas">Facturación</a></li>
+            <li><a href="/rutas" class="active">Rutas</a></li>
+        </ul>
+    </nav>
+
+    <div class="main-container" style="max-width: 750px;">
+        <div class="card">
+            <h2>Programar Ruta de Entrega (Sede Sonsonate)</h2>
+            {% with messages = get_flashed_messages() %}
+              {% if messages %}
+                {% for message in messages %}
+                  <div class="success-msg">{{ message }}</div>
+                {% endfor %}
+              {% endif %}
+            {% endwith %}
+
+            <form method="POST">
+                <label>Seleccionar Agricultor:</label>
+                <select name="cliente_id" required>
+                    <option value="">-- Seleccione un agricultor --</option>
+                    {% for cliente in clientes %}
+                        <option value="{{ cliente.id }}">{{ cliente.nombre }} (DUI: {{ cliente.dui }})</option>
+                    {% endfor %}
+                </select>
+
+                <label>Seleccionar Parcela de Destino en el Mapa:</label>
+                <div id="map"></div>
+                <input type="text" id="destino" name="destino" placeholder="Haga clic en el mapa para asignar coordenadas" required>
+
+                <label>Descripción de Carga / Insumos:</label>
+                <textarea name="descripcion_carga" rows="2" placeholder="Ej. 5 quintales de abono" required></textarea>
+
+                <label>Fecha Programada:</label>
+                <input type="date" name="fecha_programada" required>
+
+                <button type="submit" class="btn">Programar y Guardar Ruta</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        var map = L.map('map').setView([13.7185, -89.7234], 11);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 18,
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+
+        var marker;
+        map.on('click', function(e) {
+            var lat = e.latlng.lat.toFixed(4);
+            var lng = e.latlng.lng.toFixed(4);
+            if (marker) {
+                marker.setLatLng(e.latlng);
+            } else {
+                marker = L.marker(e.latlng).addTo(map);
+            }
+            document.getElementById('destino').value = "Punto GPS: Lat " + lat + ", Lng " + lng;
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,860 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AGROTERRA NACIONAL | Catálogo, Crédito y Logística Agrícola</title>
+<link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+<style>
+    :root {
+        --corp-green-dark: #14532d;
+        --corp-green: #15803d;
+        --corp-green-mid: #16a34a;
+        --corp-green-soft: #f0fdf4;
+        --corp-navy: #0f172a;
+        --corp-slate: #475569;
+        --corp-border: #e2e8f0;
+        --corp-bg: #f1f5f9;
+    }
+
+    body {
+        background-color: var(--corp-bg);
+        color: var(--corp-navy);
+        font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+        margin: 0;
+    }
+
+    .top-strip {
+        background: var(--corp-green-dark);
+        color: #dcfce7;
+        font-size: 12px;
+        padding: 6px 28px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 8px;
+    }
+
+    .corp-navbar {
+        background: #ffffff;
+        border-bottom: 1px solid var(--corp-border);
+        padding: 12px 28px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 16px;
+        position: sticky;
+        top: 0;
+        z-index: 50;
+        box-shadow: 0 2px 10px rgba(15, 23, 42, 0.04);
+    }
+
+    .brand-lockup {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        text-decoration: none;
+    }
+
+    .brand-mark {
+        width: 42px;
+        height: 42px;
+        border-radius: 10px;
+        background: linear-gradient(135deg, var(--corp-green-dark), var(--corp-green-mid));
+        color: #ffffff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 20px;
+        font-weight: 800;
+        box-shadow: 0 4px 10px rgba(21, 128, 61, 0.25);
+    }
+
+    .brand-title {
+        font-size: 18px;
+        font-weight: 800;
+        letter-spacing: 0.4px;
+        color: var(--corp-navy);
+        line-height: 1.1;
+    }
+
+    .brand-sub {
+        font-size: 11px;
+        font-weight: 600;
+        color: var(--corp-green);
+        text-transform: uppercase;
+        letter-spacing: 0.8px;
+    }
+
+    .corp-nav-links {
+        list-style: none;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        margin: 0;
+        padding: 0;
+        flex-wrap: wrap;
+    }
+
+    .corp-nav-links a {
+        text-decoration: none;
+        color: #334155;
+        font-weight: 600;
+        font-size: 14px;
+        padding: 8px 14px;
+        border-radius: 8px;
+        transition: all 0.15s ease;
+    }
+
+    .corp-nav-links a:hover {
+        background: var(--corp-green-soft);
+        color: var(--corp-green);
+    }
+
+    .corp-nav-links a.active {
+        background: var(--corp-green);
+        color: #ffffff;
+    }
+
+    .corp-nav-links a.logout-link {
+        color: #dc2626;
+    }
+
+    .corp-nav-links a.logout-link:hover {
+        background: #fef2f2;
+    }
+
+    .shell {
+        max-width: 1380px;
+        margin: 22px auto;
+        padding: 0 24px 36px;
+    }
+
+    .hero-banner {
+        background: linear-gradient(115deg, #14532d 0%, #166534 55%, #1e293b 100%);
+        color: #ffffff;
+        border-radius: 14px;
+        padding: 22px 26px;
+        margin-bottom: 18px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 16px;
+        box-shadow: 0 8px 20px rgba(20, 83, 45, 0.14);
+    }
+
+    .hero-banner h1 {
+        margin: 0 0 6px 0;
+        font-size: 22px;
+        font-weight: 800;
+    }
+
+    .hero-banner p {
+        margin: 0;
+        color: #dcfce7;
+        font-size: 14px;
+        max-width: 660px;
+    }
+
+    .role-pill {
+        background: rgba(255, 255, 255, 0.14);
+        border: 1px solid rgba(255, 255, 255, 0.25);
+        padding: 10px 16px;
+        border-radius: 10px;
+        font-size: 13px;
+        text-align: right;
+    }
+
+    .corp-card {
+        background: #ffffff;
+        border: 1px solid var(--corp-border);
+        border-radius: 14px;
+        padding: 20px;
+        box-shadow: 0 3px 12px rgba(15, 23, 42, 0.04);
+    }
+
+    .workspace-grid {
+        display: grid;
+        grid-template-columns: 1fr 380px;
+        gap: 22px;
+        align-items: start;
+    }
+
+    @media (max-width: 1060px) {
+        .workspace-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    .catalog-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        flex-wrap: wrap;
+        gap: 14px;
+        margin-bottom: 16px;
+    }
+
+    .catalog-header h2 {
+        margin: 0;
+        font-size: 19px;
+        font-weight: 800;
+    }
+
+    .search-form {
+        display: flex;
+        gap: 8px;
+        flex: 1;
+        min-width: 260px;
+        max-width: 440px;
+    }
+
+    .search-form input {
+        margin: 0 !important;
+        border-radius: 8px !important;
+    }
+
+    .category-row {
+        display: flex;
+        gap: 8px;
+        flex-wrap: wrap;
+    }
+
+    .cat-chip {
+        padding: 7px 15px;
+        border-radius: 999px;
+        font-size: 13px;
+        font-weight: 700;
+        text-decoration: none;
+        color: #334155;
+        background: #f8fafc;
+        border: 1px solid #cbd5e1;
+        transition: all 0.15s ease;
+    }
+
+    .cat-chip:hover {
+        border-color: var(--corp-green-mid);
+        color: var(--corp-green);
+        background: var(--corp-green-soft);
+    }
+
+    .cat-chip.active {
+        background: var(--corp-green);
+        border-color: var(--corp-green);
+        color: #ffffff;
+    }
+
+    .admin-bar-grid {
+        display: grid;
+        grid-template-columns: 1.8fr 1.1fr 0.9fr 0.75fr 1.2fr auto;
+        gap: 10px;
+        align-items: end;
+    }
+
+    @media (max-width: 1020px) {
+        .admin-bar-grid {
+            grid-template-columns: 1fr;
+        }
+    }
+
+    .products-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+        gap: 18px;
+        margin-top: 18px;
+    }
+
+    .product-tile {
+        background: #ffffff;
+        border: 1px solid var(--corp-border);
+        border-radius: 14px;
+        padding: 16px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+    }
+
+    .product-tile:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 10px 22px rgba(15, 23, 42, 0.08);
+        border-color: #86efac;
+    }
+
+    .product-thumb {
+        height: 124px;
+        border-radius: 10px;
+        background: linear-gradient(180deg, #f0fdf4 0%, #dcfce7 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 42px;
+        margin-bottom: 12px;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .stock-badge {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        background: #ffffff;
+        color: var(--corp-green-dark);
+        border: 1px solid #bbf7d0;
+        font-size: 11px;
+        font-weight: 700;
+        padding: 3px 8px;
+        border-radius: 999px;
+        z-index: 2;
+    }
+
+    .product-cat {
+        font-size: 11px;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 0.6px;
+        color: var(--corp-green);
+        margin-bottom: 4px;
+    }
+
+    .product-title {
+        font-size: 15px;
+        font-weight: 800;
+        color: var(--corp-navy);
+        margin-bottom: 8px;
+        line-height: 1.3;
+    }
+
+    .product-price {
+        font-size: 21px;
+        font-weight: 800;
+        color: var(--corp-navy);
+    }
+
+    .product-price span {
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--corp-slate);
+    }
+
+    .right-column {
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+    }
+
+    .section-heading {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin: 0 0 12px 0;
+        font-size: 16px;
+        font-weight: 800;
+    }
+
+    .count-pill {
+        background: var(--corp-green-soft);
+        color: var(--corp-green-dark);
+        border: 1px solid #bbf7d0;
+        padding: 2px 10px;
+        border-radius: 999px;
+        font-size: 12px;
+        font-weight: 800;
+    }
+
+    .cart-item-row {
+        border-bottom: 1px solid #f1f5f9;
+        padding: 10px 0;
+    }
+
+    .cart-item-row:last-of-type {
+        border-bottom: none;
+    }
+
+    .cart-total-box {
+        background: var(--corp-green-soft);
+        border: 1px solid #bbf7d0;
+        border-radius: 10px;
+        padding: 12px 14px;
+        margin-top: 12px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .card-pay-box {
+        margin-top: 12px;
+        padding: 12px;
+        border-radius: 10px;
+        background: #f8fafc;
+        border: 1px solid #cbd5e1;
+    }
+
+    .card-pay-box label {
+        display: block;
+        font-size: 11px;
+        font-weight: 700;
+        color: #334155;
+        margin: 8px 0 3px 0;
+    }
+
+    .card-pay-box label:first-child {
+        margin-top: 0;
+    }
+
+    .card-pay-box input,
+    .card-pay-box select {
+        width: 100%;
+        box-sizing: border-box;
+        margin: 0;
+        padding: 7px 9px;
+        font-size: 12px;
+        border-radius: 7px;
+        border: 1px solid #cbd5e1;
+        background: #ffffff;
+    }
+
+    .module-switch {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+        background: #f1f5f9;
+        padding: 5px;
+        border-radius: 10px;
+        margin-bottom: 14px;
+    }
+
+    .module-btn {
+        border: none;
+        background: transparent;
+        color: #475569;
+        padding: 9px 8px;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.15s ease;
+    }
+
+    .module-btn.active {
+        background: #ffffff;
+        color: var(--corp-green-dark);
+        box-shadow: 0 2px 6px rgba(15, 23, 42, 0.08);
+    }
+
+    .module-panel {
+        display: none;
+    }
+
+    .module-panel.active {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .action-tile {
+        display: flex;
+        flex-direction: column;
+        gap: 3px;
+        padding: 12px 14px;
+        border-radius: 10px;
+        border: 1px solid var(--corp-border);
+        background: #f8fafc;
+        text-decoration: none;
+        color: var(--corp-navy);
+        transition: all 0.15s ease;
+    }
+
+    .action-tile:hover {
+        background: var(--corp-green-soft);
+        border-color: var(--corp-green-mid);
+        transform: translateX(2px);
+    }
+
+    .action-tile strong {
+        font-size: 14px;
+        color: var(--corp-navy);
+    }
+
+    .action-tile span {
+        font-size: 12px;
+        color: var(--corp-slate);
+        line-height: 1.35;
+    }
+</style>
+</head>
+<body>
+
+<div class="top-strip">
+    <span>🌾 Distribución Agropecuaria Nacional · Casa Matriz Sonsonate, El Salvador</span>
+    <span>Respaldo de Crédito Agrícola, Facturación y Logística</span>
+</div>
+
+<nav class="corp-navbar">
+    <a href="/" class="brand-lockup">
+        <div class="brand-mark">🌿</div>
+        <div>
+            <div class="brand-title">AGROTERRA SV</div>
+            <div class="brand-sub">Insumos y Crédito Agrícola</div>
+        </div>
+    </a>
+
+    <ul class="corp-nav-links">
+        <li><a href="/" class="active">Catálogo ({{ total_unidades }})</a></li>
+        {% if usuario_actual and (usuario_actual.es_admin or usuario_actual.es_vendedor) %}
+            <li><a href="/nueva-factura">Emitir Factura</a></li>
+        {% endif %}
+        <li><a href="/rutas">Rutas</a></li>
+        {% if usuario_actual and usuario_actual.es_admin %}
+            <li><a href="/usuarios">Usuarios</a></li>
+        {% endif %}
+        <li><a href="/logout" class="logout-link">Cerrar Sesión</a></li>
+    </ul>
+</nav>
+
+<div class="shell">
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        {% for message in messages %}
+          <div class="success-msg">{{ message }}</div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <section class="hero-banner">
+        <div>
+            <h1>Catálogo Nacional de Insumos Agrícolas</h1>
+            <p>Selecciona semillas, insecticidas, fertilizantes hidrosolubles y herramientas para armar el pedido del agricultor y descontarlo de su línea de crédito activa.</p>
+        </div>
+        {% if usuario_actual %}
+        <div class="role-pill">
+            <div><strong>{{ usuario_actual.nombre_persona }}</strong></div>
+            <div>@{{ usuario_actual.username }} · <strong>{{ usuario_actual.rol.nombre }}</strong></div>
+        </div>
+        {% endif %}
+    </section>
+
+    <div class="workspace-grid">
+        <!-- COLUMNA PRINCIPAL: CATÁLOGO DE PRODUCTOS -->
+        <main>
+            <div class="corp-card">
+                <div class="catalog-header">
+                    <h2>Insumos Disponibles ({{ productos|length }})</h2>
+                    <form method="GET" action="/" class="search-form">
+                        <input type="hidden" name="categoria" value="{{ categoria_actual }}">
+                        <input type="text" name="q" value="{{ buscar }}" placeholder="Buscar semilla, insecticida o herramienta...">
+                        <button type="submit" class="btn">Buscar</button>
+                    </form>
+                </div>
+
+                <div class="category-row">
+                    {% for cat in categorias %}
+                        <a href="/?categoria={{ cat }}&q={{ buscar }}" class="cat-chip {% if categoria_actual == cat %}active{% endif %}">
+                            {{ cat }}
+                        </a>
+                    {% endfor %}
+                </div>
+            </div>
+
+            {% if usuario_actual and usuario_actual.es_admin %}
+            <div class="corp-card" style="margin-top: 16px;">
+                <h3 style="margin: 0 0 12px 0; font-size: 15px; font-weight: 800;">➕ Alta Rápida de Insumo al Catálogo (ADMIN)</h3>
+                <form method="POST" action="/catalogo/nuevo-producto" enctype="multipart/form-data" class="admin-bar-grid">
+                    <div>
+                        <label style="margin: 0 0 4px 0; font-size: 12px;">Nombre del insumo</label>
+                        <input type="text" name="nombre" placeholder="Ej. FERTILIZANTE FOLIAR / 1 LT" required style="margin: 0;">
+                    </div>
+                    <div>
+                        <label style="margin: 0 0 4px 0; font-size: 12px;">Categoría</label>
+                        <select name="categoria" required style="margin: 0;">
+                            <option value="Semilla">Semilla</option>
+                            <option value="Insecticida">Insecticida</option>
+                            <option value="Hidrosoluble">Hidrosoluble</option>
+                            <option value="Herramientas">Herramientas</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label style="margin: 0 0 4px 0; font-size: 12px;">Precio ($)</label>
+                        <input type="number" step="0.01" min="0.01" name="precio" placeholder="0.00" required style="margin: 0;">
+                    </div>
+                    <div>
+                        <label style="margin: 0 0 4px 0; font-size: 12px;">Stock</label>
+                        <input type="number" min="0" name="stock" value="50" required style="margin: 0;">
+                    </div>
+                    <div>
+                        <label style="margin: 0 0 4px 0; font-size: 12px;">Foto del insumo</label>
+                        <input type="file" name="imagen" accept=".png,.jpg,.jpeg,.webp" style="margin: 0; padding: 6px; font-size: 12px;">
+                    </div>
+                    <button type="submit" class="btn" style="padding: 10px 16px;">Guardar</button>
+                </form>
+            </div>
+            {% endif %}
+
+            <div class="products-grid">
+                {% for p in productos %}
+                {% set img_archivo = resolver_imagen(p.imagen) %}
+                <article class="product-tile">
+                    <div>
+                        <div class="product-thumb">
+                            {% if img_archivo %}
+                                <img
+                                    src="{{ url_for('static', filename='uploads/productos/' + img_archivo) }}"
+                                    alt="{{ p.nombre }}"
+                                    onerror="this.style.display='none'; this.nextElementSibling.style.display='inline';"
+                                    style="width: 100%; height: 100%; object-fit: contain; padding: 8px;"
+                                >
+                                <span style="display: none;">🌱</span>
+                            {% else %}
+                                <span>🌱</span>
+                            {% endif %}
+                            <span class="stock-badge">Stock: {{ p.stock }}</span>
+                        </div>
+                        <div class="product-cat">{{ p.categoria }}</div>
+                        <div class="product-title">{{ p.nombre }}</div>
+                        <div class="product-price">${{ "%.2f"|format(p.precio) }} <span>USD</span></div>
+                    </div>
+
+                    <form method="POST" action="/carrito/agregar/{{ p.id }}" style="margin-top: 14px;">
+                        <div style="display: flex; gap: 8px; align-items: center;">
+                            <input type="number" name="cantidad" min="1" max="{{ p.stock if p.stock > 0 else 1 }}" value="1" style="width: 68px; margin: 0;">
+                            <button type="submit" class="btn" style="flex: 1; padding: 9px 12px; font-size: 13px;">+ Agregar</button>
+                        </div>
+                    </form>
+
+                    {% if usuario_actual and usuario_actual.es_admin %}
+                    <details style="margin-top: 10px; border-top: 1px solid #f1f5f9; padding-top: 8px;">
+                        <summary style="font-size: 12px; font-weight: 700; color: #15803d; cursor: pointer;">
+                            📷 Cambiar foto / editar
+                        </summary>
+                        <form method="POST" action="/catalogo/editar-producto/{{ p.id }}" enctype="multipart/form-data" style="margin-top: 8px; display: flex; flex-direction: column; gap: 6px;">
+                            <input type="text" name="nombre" value="{{ p.nombre }}" style="margin: 0; font-size: 12px; padding: 5px;">
+                            <div style="display: flex; gap: 6px;">
+                                <input type="number" step="0.01" min="0.01" name="precio" value="{{ '%.2f'|format(p.precio) }}" style="margin: 0; font-size: 12px; padding: 5px; width: 50%;">
+                                <input type="number" min="0" name="stock" value="{{ p.stock }}" style="margin: 0; font-size: 12px; padding: 5px; width: 50%;">
+                            </div>
+                            <input type="file" name="imagen" accept=".png,.jpg,.jpeg,.webp" style="margin: 0; font-size: 11px; padding: 4px;">
+                            <button type="submit" class="btn" style="padding: 6px; font-size: 12px;">Actualizar</button>
+                        </form>
+                    </details>
+                    {% endif %}
+                </article>
+                {% else %}
+                <div class="corp-card">No se encontraron productos con el filtro actual.</div>
+                {% endfor %}
+            </div>
+        </main>
+
+        <!-- PANEL LATERAL DERECHO: CARRITO + MÓDULOS POR ROL -->
+        <aside class="right-column">
+            <div class="corp-card">
+                <div class="section-heading">
+                    <span>🧺 Carrito de Pedido</span>
+                    <span class="count-pill">{{ total_unidades }} und.</span>
+                </div>
+
+                {% if items_carrito %}
+                    {% for item in items_carrito %}
+                    <div class="cart-item-row">
+                        <div style="font-weight: 700; font-size: 13px;">{{ item.producto.nombre }}</div>
+                        <div style="font-size: 12px; color: var(--corp-slate);">
+                            ${{ "%.2f"|format(item.producto.precio) }} c/u · Subtotal: <strong>${{ "%.2f"|format(item.subtotal) }}</strong>
+                        </div>
+                        <form method="POST" action="/carrito/actualizar/{{ item.producto.id }}" style="display: flex; gap: 6px; margin-top: 6px;">
+                            <input type="number" name="cantidad" min="0" value="{{ item.cantidad }}" style="width: 66px; margin: 0; padding: 4px 6px;">
+                            <button type="submit" class="btn" style="padding: 4px 10px; font-size: 12px;">Actualizar</button>
+                        </form>
+                    </div>
+                    {% endfor %}
+
+                    <div class="cart-total-box">
+                        <span style="font-size: 13px; font-weight: 700; color: var(--corp-green-dark);">Subtotal insumos:</span>
+                        <strong style="font-size: 20px; color: var(--corp-green-dark);">${{ "%.2f"|format(total_carrito) }}</strong>
+                    </div>
+
+                    {% if usuario_actual and (usuario_actual.es_admin or usuario_actual.es_vendedor) %}
+                        <a href="/nueva-factura" class="btn" style="display: block; text-align: center; margin-top: 12px; background-color: #1d4ed8;">
+                            Proceder a Emitir Factura (Tienda)
+                        </a>
+                    {% elif usuario_actual and usuario_actual.es_comprador %}
+                        <form method="POST" action="/carrito/pagar-tarjeta" class="card-pay-box" id="form-pago-comprador">
+                            <div style="font-size: 12px; font-weight: 800; color: var(--corp-navy);">
+                                🚚 Envío a Domicilio (desde {{ origen_tienda }})
+                            </div>
+
+                            <label>Zona / Municipio de entrega</label>
+                            <select name="zona_envio" id="zona_envio" onchange="actualizarTotalEnvio()">
+                                {% for zona, tarifa in tarifas_envio.items() %}
+                                    <option value="{{ zona }}" data-tarifa="{{ '%.2f'|format(tarifa) }}">
+                                        {{ zona }} (+${{ "%.2f"|format(tarifa) }})
+                                    </option>
+                                {% endfor %}
+                            </select>
+
+                            <label>¿Hasta dónde quieres que te lleven las cosas? (Dirección / Cantón)</label>
+                            <input type="text" name="direccion_entrega" placeholder="Ej. Cantón El Sunza, 200m al norte..." required>
+
+                            <label>Teléfono de contacto para entrega</label>
+                            <input type="text" name="telefono_contacto" placeholder="Ej. 7000-0000">
+
+                            <div style="margin-top: 10px; padding-top: 8px; border-top: 1px dashed #cbd5e1; font-size: 12px; font-weight: 800; color: var(--corp-navy);">
+                                💳 Pago con Tarjeta de Crédito
+                            </div>
+
+                            <label>Nombre en la tarjeta</label>
+                            <input type="text" name="titular_tarjeta" placeholder="Ej. JOSUE MARTINEZ" required>
+
+                            <label>Número de tarjeta</label>
+                            <input type="text" name="numero_tarjeta" inputmode="numeric" maxlength="23" placeholder="1234 5678 9012 3456" required>
+
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+                                <div>
+                                    <label>Vencimiento (MM/AA)</label>
+                                    <input type="text" name="expiracion_tarjeta" maxlength="5" placeholder="08/28" required>
+                                </div>
+                                <div>
+                                    <label>CVV</label>
+                                    <input type="password" name="cvv_tarjeta" inputmode="numeric" maxlength="4" placeholder="123" required>
+                                </div>
+                            </div>
+
+                            <div style="margin-top: 10px; padding: 8px 10px; border-radius: 8px; background: #eff6ff; border: 1px solid #bfdbfe; font-size: 12px; color: #1e3a8a; display: flex; justify-content: space-between;">
+                                <span>Envío: <strong id="txt-tarifa-envio">$4.50</strong></span>
+                                <span>Total a pagar: <strong id="txt-total-final">${{ "%.2f"|format(total_carrito + 4.50) }}</strong></span>
+                            </div>
+
+                            <button type="submit" id="btn-pagar-envio" class="btn" style="width: 100%; margin-top: 10px; background-color: #1d4ed8;">
+                                Pagar ${{ "%.2f"|format(total_carrito + 4.50) }} con Tarjeta y Envío
+                            </button>
+                        </form>
+                    {% endif %}
+
+                    <form method="POST" action="/carrito/vaciar" style="margin-top: 8px;">
+                        <button type="submit" class="btn btn-danger" style="width: 100%; padding: 8px; font-size: 12px;">Vaciar Carrito</button>
+                    </form>
+                {% else %}
+                    <p style="color: var(--corp-slate); font-size: 13px; margin: 0; line-height: 1.5;">
+                        El carrito está vacío. Indica la cantidad deseada en cualquier insumo del catálogo para iniciar un pedido.
+                    </p>
+                {% endif %}
+            </div>
+
+            <div class="corp-card">
+                {% if usuario_actual and (usuario_actual.es_admin or usuario_actual.es_vendedor) %}
+                    <div class="module-switch">
+                        <button id="btn-clientes-credito" type="button" class="module-btn active" onclick="mostrarApartado('clientes-credito')">
+                            🌾 Clientes y Crédito
+                        </button>
+                        <button id="btn-facturas-rutas" type="button" class="module-btn" onclick="mostrarApartado('facturas-rutas')">
+                            🧾 Facturas y Rutas
+                        </button>
+                    </div>
+
+                    <div id="panel-clientes-credito" class="module-panel active">
+                        <a href="/registrar-cliente" class="action-tile">
+                            <strong>➕ Registrar Agricultor</strong>
+                            <span>Alta de productores agrícolas con DUI, contacto y ubicación.</span>
+                        </a>
+                        <a href="/clientes" class="action-tile">
+                            <strong>👥 Padrón de Agricultores</strong>
+                            <span>Consulta, edita o administra los clientes registrados.</span>
+                        </a>
+                        {% if usuario_actual.es_admin %}
+                        <a href="/registrar-credito" class="action-tile">
+                            <strong>💳 Otorgar Línea de Crédito</strong>
+                            <span>Asigna montos de financiamiento agrícola por cliente.</span>
+                        </a>
+                        {% endif %}
+                    </div>
+
+                    <div id="panel-facturas-rutas" class="module-panel">
+                        <a href="/nueva-factura" class="action-tile">
+                            <strong>🧾 Emitir Factura con Crédito</strong>
+                            <span>Carga los insumos elegidos y descuenta saldo disponible.</span>
+                        </a>
+                        <a href="/facturas" class="action-tile">
+                            <strong>📄 Registro de Facturas</strong>
+                            <span>Revisa facturas emitidas y genera comprobantes PDF.</span>
+                        </a>
+                        <a href="/registrar-ruta" class="action-tile">
+                            <strong>🚚 Programar Ruta de Entrega</strong>
+                            <span>Asigna destino en mapa y despacho desde Sonsonate.</span>
+                        </a>
+                        <a href="/rutas" class="action-tile">
+                            <strong>🗺️ Control de Rutas y GPS</strong>
+                            <span>Monitorea entregas programadas y trayectos.</span>
+                        </a>
+                    </div>
+
+                {% elif usuario_actual and usuario_actual.es_comprador %}
+                    <h3 class="section-heading">📦 Portal del Comprador</h3>
+                    <div class="module-panel active">
+                        <a href="/facturas" class="action-tile">
+                            <strong>📄 Mis Facturas y Comprobantes</strong>
+                            <span>Consulta tus compras realizadas y descarga tus PDF.</span>
+                        </a>
+                        <a href="/rutas" class="action-tile">
+                            <strong>🗺️ Seguimiento de Mis Rutas</strong>
+                            <span>Revisa el estado y ruta en Maps de tus entregas.</span>
+                        </a>
+                    </div>
+                {% endif %}
+            </div>
+        </aside>
+    </div>
+</div>
+
+<script>
+    const SUBTOTAL_CARRITO = Number("{{ total_carrito or 0 }}") || 0;
+
+    function actualizarTotalEnvio() {
+        const select = document.getElementById('zona_envio');
+        const txtTarifa = document.getElementById('txt-tarifa-envio');
+        const txtTotal = document.getElementById('txt-total-final');
+        const btnPagar = document.getElementById('btn-pagar-envio');
+        if (!select || !txtTarifa || !txtTotal || !btnPagar) return;
+
+        const opcion = select.options[select.selectedIndex];
+        const tarifa = parseFloat(opcion.getAttribute('data-tarifa') || '0');
+        const totalFinal = (SUBTOTAL_CARRITO + tarifa).toFixed(2);
+
+        txtTarifa.textContent = `$${tarifa.toFixed(2)}`;
+        txtTotal.textContent = `$${totalFinal}`;
+        btnPagar.textContent = `Pagar $${totalFinal} con Tarjeta y Envío`;
+    }
+
+    function mostrarApartado(apartado) {
+        const panelClientes = document.getElementById('panel-clientes-credito');
+        const panelFacturas = document.getElementById('panel-facturas-rutas');
+        const btnClientes = document.getElementById('btn-clientes-credito');
+        const btnFacturas = document.getElementById('btn-facturas-rutas');
+
+        if (!panelClientes || !panelFacturas || !btnClientes || !btnFacturas) return;
+
+        if (apartado === 'clientes-credito') {
+            panelClientes.classList.add('active');
+            panelFacturas.classList.remove('active');
+            btnClientes.classList.add('active');
+            btnFacturas.classList.remove('active');
+        } else {
+            panelFacturas.classList.add('active');
+            panelClientes.classList.remove('active');
+            btnFacturas.classList.add('active');
+            btnClientes.classList.remove('active');
+        }
+        localStorage.setItem('apartadoActivo', apartado);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+        const guardado = localStorage.getItem('apartadoActivo');
+        if (guardado) {
+            mostrarApartado(guardado);
+        }
+        actualizarTotalEnvio();
+    });
+</script>
+
+</body>
+</html>

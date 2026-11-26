@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Catálogo Agrícola y Carrito</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        .shop-topbar {
+            display: flex;
+            gap: 12px;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            margin-bottom: 16px;
+        }
+        .search-box {
+            display: flex;
+            flex: 1;
+            min-width: 240px;
+            gap: 8px;
+        }
+        .cat-bar {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+        .cat-pill {
+            padding: 8px 14px;
+            border-radius: 999px;
+            border: 1px solid #cbd5e1;
+            background: #fff;
+            color: #1e293b;
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        .cat-pill.active {
+            background: #16a34a;
+            color: #fff;
+            border-color: #16a34a;
+        }
+        .shop-layout {
+            display: grid;
+            grid-template-columns: 1fr 340px;
+            gap: 20px;
+            align-items: start;
+        }
+        @media (max-width: 900px) {
+            .shop-layout { grid-template-columns: 1fr; }
+        }
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 16px;
+        }
+        .prod-card {
+            background: #fff;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+        .prod-img-box {
+            height: 110px;
+            background: #f0fdf4;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 40px;
+            margin-bottom: 12px;
+        }
+        .prod-price {
+            font-size: 20px;
+            font-weight: 700;
+            color: #15803d;
+            margin: 4px 0;
+        }
+        .prod-name {
+            font-weight: 700;
+            color: #0f172a;
+            margin-bottom: 6px;
+        }
+        .prod-cat {
+            font-size: 12px;
+            color: #64748b;
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <a href="/" class="logo">🌱 Sistema Agrícola ES</a>
+        <ul class="navbar-nav">
+            <li><a href="/">Inicio</a></li>
+            <li><a href="/catalogo" class="active">Catálogo ({{ total_unidades }})</a></li>
+            <li><a href="/nueva-factura">Emitir Factura</a></li>
+            <li><a href="/rutas">Rutas</a></li>
+            {% if usuario_actual and usuario_actual.es_admin %}
+                <li><a href="/usuarios">Usuarios</a></li>
+            {% endif %}
+            <li><a href="/logout" style="color: #dc2626;">Salir</a></li>
+        </ul>
+    </nav>
+
+    <div class="main-container">
+        {% with messages = get_flashed_messages() %}
+          {% if messages %}
+            {% for message in messages %}
+              <div class="success-msg">{{ message }}</div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+
+        <div class="card">
+            <div class="shop-topbar">
+                <h2 style="margin: 0;">🛒 Catálogo de Insumos Agrícolas</h2>
+                <form method="GET" action="/catalogo" class="search-box">
+                    <input type="hidden" name="categoria" value="{{ categoria_actual }}">
+                    <input type="text" name="q" value="{{ buscar }}" placeholder="Buscar insumo, semilla o fertilizante..." style="margin: 0;">
+                    <button type="submit" class="btn">Buscar</button>
+                </form>
+            </div>
+
+            <div class="cat-bar">
+                {% for cat in categorias %}
+                    <a href="/catalogo?categoria={{ cat }}&q={{ buscar }}" class="cat-pill {% if categoria_actual == cat %}active{% endif %}">
+                        {{ cat }}
+                    </a>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="shop-layout">
+            <div class="products-grid">
+                {% for p in productos %}
+                <div class="prod-card">
+                    <div>
+                        <div class="prod-img-box">🌿</div>
+                        <div class="prod-cat">{{ p.categoria }} · Stock: {{ p.stock }}</div>
+                        <div class="prod-name">{{ p.nombre }}</div>
+                        <div class="prod-price">${{ "%.2f"|format(p.precio) }}</div>
+                    </div>
+
+                    <form method="POST" action="/carrito/agregar/{{ p.id }}" style="margin-top: 10px;">
+                        <div style="display: flex; gap: 8px; align-items: center;">
+                            <input type="number" name="cantidad" min="1" max="{{ p.stock if p.stock > 0 else 1 }}" value="1" style="width: 72px; margin: 0;">
+                            <button type="submit" class="btn" style="flex: 1; padding: 8px 10px; font-size: 13px;">+ Carrito</button>
+                        </div>
+                    </form>
+                </div>
+                {% else %}
+                <div class="card">No se encontraron productos con ese filtro.</div>
+                {% endfor %}
+            </div>
+
+            <div class="card">
+                <h3 style="margin-top: 0;">🧺 Carrito de Compra ({{ total_unidades }})</h3>
+                {% if items_carrito %}
+                    {% for item in items_carrito %}
+                    <div style="border-bottom: 1px solid #e2e8f0; padding: 10px 0;">
+                        <div style="font-weight: 700; font-size: 14px;">{{ item.producto.nombre }}</div>
+                        <div style="font-size: 13px; color: #64748b;">
+                            ${{ "%.2f"|format(item.producto.precio) }} c/u · Subtotal: <strong>${{ "%.2f"|format(item.subtotal) }}</strong>
+                        </div>
+                        <form method="POST" action="/carrito/actualizar/{{ item.producto.id }}" style="display: flex; gap: 6px; margin-top: 6px;">
+                            <input type="number" name="cantidad" min="0" value="{{ item.cantidad }}" style="width: 68px; margin: 0; padding: 4px 6px;">
+                            <button type="submit" class="btn" style="padding: 4px 10px; font-size: 12px;">Actualizar</button>
+                        </form>
+                    </div>
+                    {% endfor %}
+
+                    <div style="margin-top: 14px; font-size: 18px;">
+                        Total carrito: <strong style="color: #15803d;">${{ "%.2f"|format(total_carrito) }}</strong>
+                    </div>
+
+                    <a href="/nueva-factura" class="btn" style="display: block; text-align: center; margin-top: 14px; background-color: #2563eb;">
+                        Ir a Emitir Factura
+                    </a>
+
+                    <form method="POST" action="/carrito/vaciar" style="margin-top: 8px;">
+                        <button type="submit" class="btn btn-danger" style="width: 100%; padding: 8px; font-size: 13px;">Vaciar Carrito</button>
+                    </form>
+                {% else %}
+                    <p style="color: #64748b; font-size: 14px;">Tu carrito está vacío. Selecciona productos y cantidades a la izquierda.</p>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</body>
+</html>

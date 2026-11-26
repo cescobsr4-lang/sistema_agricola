@@ -1,0 +1,92 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% if usuario_actual and usuario_actual.es_comprador %}Mis Facturas{% else %}Historial General de Facturas{% endif %} | Sistema Agrícola ES</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <nav class="navbar">
+        <a href="/" class="brand">Sistema Agrícola ES</a>
+        <ul class="nav-links">
+            <li><a href="/">Inicio</a></li>
+            {% if usuario_actual and (usuario_actual.es_admin or usuario_actual.es_vendedor) %}
+                <li><a href="/clientes">Agricultores</a></li>
+            {% endif %}
+            <li><a href="/facturas" class="active">{% if usuario_actual and usuario_actual.es_comprador %}Mis Facturas{% else %}Facturación{% endif %}</a></li>
+            <li><a href="/rutas">Rutas</a></li>
+            <li><a href="/logout" style="color:#dc2626;">Cerrar Sesión</a></li>
+        </ul>
+    </nav>
+
+    <div class="container" style="max-width: 1020px;">
+        {% with messages = get_flashed_messages() %}
+          {% if messages %}
+            {% for message in messages %}
+              <div class="success-msg">{{ message }}</div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+
+        <div class="card">
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:16px;">
+                <div>
+                    <h2 style="margin:0;">
+                        {% if usuario_actual and usuario_actual.es_comprador %}
+                            Mis Facturas y Comprobantes
+                        {% else %}
+                            Historial General de Facturas
+                        {% endif %}
+                    </h2>
+                    <p style="margin:4px 0 0 0; color:#64748b; font-size:13px;">
+                        {% if usuario_actual and usuario_actual.es_comprador %}
+                            Mostrando únicamente las compras realizadas con tu cuenta ({{ usuario_actual.nombre_persona }}).
+                        {% else %}
+                            Registro completo de facturas emitidas en tienda y compras en línea.
+                        {% endif %}
+                    </p>
+                </div>
+                <div style="display:flex; gap:8px; flex-wrap:wrap;">
+                    <a href="/rutas" class="btn" style="background:#0f766e;">Ver Ruta en Maps</a>
+                    {% if usuario_actual and (usuario_actual.es_admin or usuario_actual.es_vendedor) %}
+                        <a href="/nueva-factura" class="btn">+ Emitir Factura</a>
+                    {% endif %}
+                </div>
+            </div>
+
+            {% if facturas %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>N° Factura</th>
+                        <th>Comprador / Agricultor</th>
+                        <th>Fecha</th>
+                        <th>Concepto y Envío</th>
+                        <th>Total</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for f in facturas %}
+                    <tr>
+                        <td><strong>{{ f.numero_factura }}</strong></td>
+                        <td>{{ f.cliente.nombre if f.cliente else 'N/A' }}</td>
+                        <td>{{ f.fecha }}</td>
+                        <td>{{ f.concepto }}</td>
+                        <td><strong>${{ "%.2f"|format(f.total) }}</strong></td>
+                        <td style="display:flex; flex-direction:column; gap:6px;">
+                            <a href="/factura/{{ f.id }}/vista" class="btn" style="padding:6px 10px; font-size:12px; background:#334155;">Ver / Imprimir</a>
+                            <a href="/factura/{{ f.id }}/pdf" class="btn" style="padding:6px 10px; font-size:12px;">PDF</a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+                <p style="color:#64748b;">Aún no tienes facturas registradas. Ve al <a href="/">Catálogo</a> para realizar tu pedido.</p>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>

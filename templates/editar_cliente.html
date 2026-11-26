@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Editar Agricultor</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <nav class="navbar">
+        <a href="/" class="logo">Sistema Agrícola ES</a>
+        <ul class="navbar-nav">
+            <li><a href="/">Inicio</a></li>
+            <li><a href="/clientes" class="active">Agricultores</a></li>
+            <li><a href="/facturas">Facturación</a></li>
+            <li><a href="/rutas">Rutas</a></li>
+        </ul>
+    </nav>
+
+    <div class="main-container" style="max-width: 600px;">
+        <div class="card">
+            <h2>Editar Datos del Agricultor</h2>
+            <form method="POST">
+                <label>Nombre completo:</label>
+                <input type="text" name="nombre" value="{{ cliente.nombre }}" required>
+
+                <label>DUI:</label>
+                <input type="text" name="dui" value="{{ cliente.dui }}" required>
+
+                <label>Teléfono:</label>
+                <input type="text" name="telefono" value="{{ cliente.telefono }}">
+
+                <label>Dirección / Cantón:</label>
+                <input type="text" name="direccion" value="{{ cliente.direccion }}">
+
+                <button type="submit" class="btn">Actualizar Datos</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

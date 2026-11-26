@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Gastos y Facturas - {{ cliente.nombre }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <style>
+        .stats-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin: 20px 0; }
+        .stat-box { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 15px; }
+        .stat-box span { font-size: 12px; color: #64748b; text-transform: uppercase; font-weight: 600; }
+        .stat-box h3 { margin: 5px 0 0 0; font-size: 22px; }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <a href="/" class="logo">Sistema Agrícola ES</a>
+        <ul class="navbar-nav">
+            <li><a href="/">Inicio</a></li>
+            <li><a href="/clientes" class="active">Agricultores</a></li>
+            <li><a href="/facturas">Facturación</a></li>
+            <li><a href="/rutas">Rutas</a></li>
+        </ul>
+    </nav>
+
+    <div class="main-container">
+        <div class="card">
+            <div style="display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                    <a href="/clientes" style="color: var(--accent); text-decoration: none; font-weight: 600; font-size: 14px;">← Volver</a>
+                    <h2 style="margin-top: 10px; margin-bottom: 4px;">Estado de Crédito y Facturas: {{ cliente.nombre }}</h2>
+                    <p style="color: #64748b; margin: 0; font-size: 14px;">DUI: {{ cliente.dui }} | Teléfono: {{ cliente.telefono or 'N/A' }}</p>
+                </div>
+                <a href="/nueva-factura" class="btn">+ Emitir Factura</a>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-box">
+                    <span>Crédito Otorgado</span>
+                    <h3 style="color: #1e293b;">${{ "%.2f"|format(total_otorgado) }}</h3>
+                </div>
+                <div class="stat-box">
+                    <span>Total Gastado</span>
+                    <h3 style="color: #d97706;">${{ "%.2f"|format(total_gastado) }}</h3>
+                </div>
+                <div class="stat-box">
+                    <span>Saldo Disponible</span>
+                    <h3 style="color: #16a34a;">${{ "%.2f"|format(saldo_disponible) }}</h3>
+                </div>
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>N° Factura</th>
+                        <th>Fecha</th>
+                        <th>Concepto</th>
+                        <th>Cant.</th>
+                        <th>P. Unitario</th>
+                        <th>Total</th>
+                        <th>Acciones PDF</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for f in facturas %}
+                    <tr>
+                        <td><strong>{{ f.numero_factura }}</strong></td>
+                        <td>{{ f.fecha }}</td>
+                        <td>{{ f.concepto }}</td>
+                        <td>{{ f.cantidad }}</td>
+                        <td>${{ "%.2f"|format(f.precio_unitario) }}</td>
+                        <td><strong>${{ "%.2f"|format(f.total) }}</strong></td>
+                        <td>
+                            <a href="/factura/{{ f.id }}/vista" target="_blank" class="btn" style="padding: 5px 10px; font-size: 12px; background-color: #475569;"> Imprimir</a>
+                            <a href="/factura/{{ f.id }}/pdf?accion=attachment" class="btn" style="padding: 5px 10px; font-size: 12px;"> PDF</a>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="7" style="text-align: center; color: #64748b;">No hay facturas registradas.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</body>
+</html>

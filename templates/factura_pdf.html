@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ factura.numero_factura }}</title>
+    <style>
+        body { font-family: Helvetica, Arial, sans-serif; color: #1e293b; font-size: 13px; margin: 30px; }
+        .header { border-bottom: 2px solid #2563eb; padding-bottom: 15px; margin-bottom: 20px; }
+        .empresa { font-size: 20px; font-weight: bold; color: #1e293b; }
+        .sub { color: #64748b; font-size: 12px; }
+        .box { background-color: #f8fafc; border: 1px solid #cbd5e1; padding: 12px; margin-bottom: 20px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th { background-color: #1e293b; color: #ffffff; padding: 10px; text-align: left; }
+        td { border-bottom: 1px solid #cbd5e1; padding: 10px; }
+        .total-row { font-size: 16px; font-weight: bold; background-color: #f1f5f9; }
+        .no-print { margin-bottom: 20px; text-align: right; }
+        .btn-print { background: #2563eb; color: white; padding: 10px 18px; text-decoration: none; border-radius: 6px; border: none; cursor: pointer; font-weight: bold; }
+        @media print {
+            .no-print { display: none; }
+            body { margin: 0; }
+        }
+    </style>
+</head>
+<body>
+
+    {% if not modo_pdf %}
+    <div class="no-print">
+        <button onclick="window.print()" class="btn-print">Imprimir Factura</button>
+        <a href="/factura/{{ factura.id }}/pdf?accion=attachment" class="btn-print" style="background: #16a34a; margin-left: 8px;"> Descargar PDF</a>
+    </div>
+    {% endif %}
+
+    <div class="header">
+        <div class="empresa">AGROSERVICIO Y CRÉDITOS SONSONATE S.A. DE C.V.</div>
+        <div class="sub">Sede Central: Calle Ing. Jesús Adalberto Díaz Pineda, Avenida Central Final, Sonsonate, El Salvador</div>
+        <div class="sub">Comprobante de Consumo contra Línea de Crédito Agrícola</div>
+    </div>
+
+    <div class="box">
+        <strong>N° DE COMPROBANTE:</strong> {{ factura.numero_factura }} &nbsp;&nbsp;|&nbsp;&nbsp;
+        <strong>FECHA:</strong> {{ factura.fecha }}<br><br>
+        <strong>AGRICULTOR:</strong> {{ factura.cliente.nombre }}<br>
+        <strong>DUI:</strong> {{ factura.cliente.dui }} &nbsp;&nbsp;|&nbsp;&nbsp;
+        <strong>TELÉFONO:</strong> {{ factura.cliente.telefono or 'N/A' }}<br>
+        <strong>DIRECCIÓN / PARCELA:</strong> {{ factura.cliente.direccion or 'N/A' }}
+    </div>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Cantidad</th>
+                <th>Descripción de Insumos / Productos</th>
+                <th>Precio Unitario</th>
+                <th>Subtotal</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>{{ factura.cantidad }}</td>
+                <td>{{ factura.concepto }}</td>
+                <td>${{ "%.2f"|format(factura.precio_unitario) }}</td>
+                <td>${{ "%.2f"|format(factura.total) }}</td>
+            </tr>
+            <tr class="total-row">
+                <td colspan="3" style="text-align: right;">TOTAL CARGADO AL CRÉDITO:</td>
+                <td>${{ "%.2f"|format(factura.total) }}</td>
+            </tr>
+        </tbody>
+    </table>
+
+    {% if credito %}
+    <div class="box" style="margin-top: 25px;">
+        <strong>RESUMEN DEL CRÉDITO AGRÍCOLA ASOCIADO (Crédito #{{ credito.id }})</strong><br><br>
+        Monto Original Aprobado: <strong>${{ "%.2f"|format(credito.monto) }}</strong><br>
+        Saldo Disponible Restante: <strong>${{ "%.2f"|format(credito.saldo_pendiente) }}</strong><br>
+        Estado Actual: <strong>{{ credito.estado }}</strong>
+    </div>
+    {% endif %}
+
+    <div style="margin-top: 50px; text-align: center; color: #64748b; font-size: 11px;">
+        _____________________________________________<br>
+        Firma de Recibido Conforme — {{ factura.cliente.nombre }}
+    </div>
+</body>
+</html>

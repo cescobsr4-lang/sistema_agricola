@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iniciar Sesión | Sistema Agrícola ES</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div style="min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px;">
+        <div class="card" style="width: 100%; max-width: 420px;">
+            <h2 style="text-align: center; margin-bottom: 6px;">Sistema Agrícola ES</h2>
+            <p style="text-align: center; color: #64748b; font-size: 14px; margin-top: 0;">
+                Inicia sesión con tu cuenta asignada o regístrate como comprador
+            </p>
+
+            {% with messages = get_flashed_messages() %}
+              {% if messages %}
+                {% for message in messages %}
+                  <div class="success-msg">{{ message }}</div>
+                {% endfor %}
+              {% endif %}
+            {% endwith %}
+
+            <form method="POST" action="/login">
+                <label>Nombre de usuario:</label>
+                <input type="text" name="username" placeholder="Ej. admin" required autofocus>
+
+                <label>Contraseña:</label>
+                <input type="password" name="password" placeholder="••••••••" required>
+
+                <button type="submit" class="btn" style="width: 100%;">Ingresar al Sistema</button>
+            </form>
+
+            <p style="text-align: center; margin-top: 16px; font-size: 14px;">
+                ¿Eres comprador nuevo? <a href="/registro-comprador">Regístrate como Comprador</a>
+            </p>
+        </div>
+    </div>
+</body>
+</html>

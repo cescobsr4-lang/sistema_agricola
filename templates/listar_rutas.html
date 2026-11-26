@@ -1,0 +1,89 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% if usuario_actual and usuario_actual.es_comprador %}Mis Rutas de Entrega{% else %}Control de Rutas y GPS{% endif %} | Sistema Agrícola ES</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <nav class="navbar">
+        <a href="/" class="brand">Sistema Agrícola ES</a>
+        <ul class="nav-links">
+            <li><a href="/">Inicio</a></li>
+            {% if usuario_actual and (usuario_actual.es_admin or usuario_actual.es_vendedor) %}
+                <li><a href="/clientes">Agricultores</a></li>
+            {% endif %}
+            <li><a href="/facturas">{% if usuario_actual and usuario_actual.es_comprador %}Mis Facturas{% else %}Facturación{% endif %}</a></li>
+            <li><a href="/rutas" class="active">Rutas</a></li>
+            <li><a href="/logout" style="color:#dc2626;">Cerrar Sesión</a></li>
+        </ul>
+    </nav>
+
+    <div class="container" style="max-width: 1020px;">
+        {% with messages = get_flashed_messages() %}
+          {% if messages %}
+            {% for message in messages %}
+              <div class="success-msg">{{ message }}</div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+
+        <div class="card">
+            <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; margin-bottom:16px;">
+                <div>
+                    <h2 style="margin:0;">
+                        {% if usuario_actual and usuario_actual.es_comprador %}
+                            Mis Rutas de Entrega a Domicilio
+                        {% else %}
+                            Control de Rutas y GPS
+                        {% endif %}
+                    </h2>
+                    <p style="margin:4px 0 0 0; color:#64748b; font-size:13px;">
+                        Origen de despacho: <strong>{{ origen_tienda }}</strong> → Destino elegido por el cliente.
+                    </p>
+                </div>
+                {% if usuario_actual and (usuario_actual.es_admin or usuario_actual.es_vendedor) %}
+                    <a href="/registrar-ruta" class="btn">+ Programar Ruta</a>
+                {% endif %}
+            </div>
+
+            {% if rutas %}
+            <table>
+                <thead>
+                    <tr>
+                        <th>Origen</th>
+                        <th>Destino de Entrega</th>
+                        <th>Detalle del Pedido</th>
+                        <th>Fecha</th>
+                        <th>Estado</th>
+                        <th>Ruta Maps</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for r in rutas %}
+                    <tr>
+                        <td>{{ origen_tienda }}</td>
+                        <td><strong>{{ r.destino }}</strong></td>
+                        <td>{{ r.descripcion_carga }}</td>
+                        <td>{{ r.fecha_programada }}</td>
+                        <td>{{ r.estado }}</td>
+                        <td style="display:flex; flex-direction:column; gap:6px;">
+                            <a href="{{ construir_url_maps(r.destino) }}" target="_blank" rel="noopener" class="btn" style="padding:6px 10px; font-size:12px; background:#15803d;">
+                                Abrir en Google Maps
+                            </a>
+                            <a href="/ver-ruta/{{ r.id }}" class="btn" style="padding:6px 10px; font-size:12px; background:#334155;">
+                                Detalle Ruta
+                            </a>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            {% else %}
+                <p style="color:#64748b;">No hay rutas de entrega registradas para tu cuenta todavía.</p>
+            {% endif %}
+        </div>
+    </div>
+</body>
+</html>

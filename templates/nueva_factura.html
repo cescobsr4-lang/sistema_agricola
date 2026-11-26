@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Emitir Factura con Crédito Agrícola</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <nav class="navbar">
+        <a href="/" class="logo">🌱 AGROTERRA SV</a>
+        <ul class="navbar-nav">
+            <li><a href="/">Catálogo ({{ total_unidades }})</a></li>
+            <li><a href="/nueva-factura" class="active">Emitir Factura</a></li>
+            <li><a href="/rutas">Rutas</a></li>
+            {% if usuario_actual and usuario_actual.es_admin %}
+                <li><a href="/usuarios">Usuarios</a></li>
+            {% endif %}
+            <li><a href="/logout" style="color: #dc2626;">Salir</a></li>
+        </ul>
+    </nav>
+
+    <div class="main-container">
+        {% with messages = get_flashed_messages() %}
+          {% if messages %}
+            {% for message in messages %}
+              <div class="success-msg">{{ message }}</div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
+
+        <div class="card" style="max-width: 720px;">
+            <h2>🧾 Emitir Factura con Crédito Agrícola</h2>
+
+            {% if items_carrito %}
+            <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 14px; margin-bottom: 18px;">
+                <strong>Productos seleccionados en el carrito:</strong>
+                <ul style="margin: 8px 0 0 18px;">
+                    {% for item in items_carrito %}
+                        <li>{{ item.cantidad }} x {{ item.producto.nombre }} (${{ "%.2f"|format(item.producto.precio) }} c/u) = <strong>${{ "%.2f"|format(item.subtotal) }}</strong></li>
+                    {% endfor %}
+                </ul>
+            </div>
+            {% else %}
+            <p style="color: #64748b;">
+                ¿Quieres elegir productos desde el catálogo? <a href="/">Ir al Catálogo</a>
+            </p>
+            {% endif %}
+
+            <form method="POST">
+                <label>Agricultor:</label>
+                <select id="cliente_id" name="cliente_id" required onchange="actualizarInfoCredito()">
+                    <option value="">-- Seleccione un agricultor --</option>
+                    {% for c in clientes %}
+                        <option value="{{ c.id }}">{{ c.nombre }} (DUI: {{ c.dui }})</option>
+                    {% endfor %}
+                </select>
+
+                <div id="info-credito" style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px; margin-bottom: 14px; font-size: 14px; color: #334155;">
+                    Selecciona un agricultor para ver su saldo de crédito disponible.
+                </div>
+
+                <label>Concepto / Insumos:</label>
+                <input type="text" name="concepto" value="{{ concepto_sugerido }}" placeholder="Ej. 4 Quintales de Abono + Semillas" required>
+
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px;">
+                    <div>
+                        <label>Cantidad (unidades totales):</label>
+                        <input id="cantidad" type="number" name="cantidad" min="1" value="{{ total_unidades if total_unidades > 0 else 1 }}" required oninput="recalcularTotal()">
+                    </div>
+                    <div>
+                        <label>Precio Unitario ($):</label>
+                        {% set precio_prom = (total_carrito / total_unidades) if total_unidades > 0 else 0.0 %}
+                        <input id="precio_unitario" type="number" step="0.01" min="0" name="precio_unitario" value="{{ '%.2f'|format(precio_prom) }}" required oninput="recalcularTotal()">
+                    </div>
+                </div>
+
+                <input id="total_manual" type="hidden" name="total_manual" value="{{ '%.2f'|format(total_carrito) }}">
+
+                <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px; margin: 16px 0;">
+                    <div style="font-size: 14px; color: #64748b;">Total a descontar del crédito:</div>
+                    <div id="total-display" style="font-size: 28px; font-weight: 800; color: #16a34a;">
+                        ${{ "%.2f"|format(total_carrito) }}
+                    </div>
+                </div>
+
+                <button type="submit" class="btn" style="background-color: #2563eb;">Generar Factura y Descontar Saldo</button>
+            </form>
+        </div>
+    </div>
+
+    <div
+        id="factura-config"
+        data-saldos='{{ saldos_por_cliente | tojson }}'
+        data-total-carrito="{{ total_carrito }}"
+        data-tiene-carrito="{{ 'true' if items_carrito else 'false' }}"
+        hidden
+    ></div>
+
+    <script>
+        const configEl = document.getElementById('factura-config');
+        const saldosClientes = JSON.parse(configEl.dataset.saldos || '{}');
+        const totalCarritoInicial = parseFloat(configEl.dataset.totalCarrito || '0') || 0;
+        let usandoCarrito = configEl.dataset.tieneCarrito === 'true';
+
+        function recalcularTotal() {
+            usandoCarrito = false;
+            const cant = parseFloat(document.getElementById('cantidad').value) || 0;
+            const precio = parseFloat(document.getElementById('precio_unitario').value) || 0;
+            const total = (cant * precio).toFixed(2);
+            document.getElementById('total_manual').value = total;
+            document.getElementById('total-display').textContent = '$' + total;
+            actualizarInfoCredito();
+        }
+
+        function actualizarInfoCredito() {
+            const clienteId = document.getElementById('cliente_id').value;
+            const box = document.getElementById('info-credito');
+            const totalCuenta = usandoCarrito
+                ? totalCarritoInicial
+                : parseFloat(document.getElementById('total_manual').value) || 0;
+
+            if (!clienteId) {
+                box.innerHTML = 'Selecciona un agricultor para ver su saldo de crédito disponible.';
+                return;
+            }
+
+            const saldo = parseFloat(saldosClientes[clienteId] || 0);
+            const restante = (saldo - totalCuenta).toFixed(2);
+
+            if (saldo <= 0) {
+                box.innerHTML = '⚠️ Este agricultor <strong>no tiene crédito activo</strong> (Saldo disponible: <strong>$0.00</strong>).';
+            } else if (totalCuenta > saldo) {
+                box.innerHTML = `Crédito disponible: <strong>$${saldo.toFixed(2)}</strong> · Cuenta actual: <strong>$${totalCuenta.toFixed(2)}</strong> · <span style="color:#dc2626;font-weight:700;">Saldo insuficiente</span>`;
+            } else {
+                box.innerHTML = `Crédito disponible: <strong>$${saldo.toFixed(2)}</strong> · Cuenta actual: <strong>$${totalCuenta.toFixed(2)}</strong> · Saldo tras factura: <strong>$${restante}</strong>`;
+            }
+        }
+    </script>
+</body>
+</html>

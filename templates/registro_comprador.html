@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro de Comprador | Sistema Agrícola ES</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div style="min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px;">
+        <div class="card" style="width: 100%; max-width: 420px;">
+            <h2 style="text-align: center; margin-bottom: 6px;">Registro de Comprador</h2>
+            <p style="text-align: center; color: #64748b; font-size: 14px; margin-top: 0;">
+                Crea tu cuenta para explorar el catálogo y armar pedidos
+            </p>
+
+            {% with messages = get_flashed_messages() %}
+              {% if messages %}
+                {% for message in messages %}
+                  <div class="success-msg">{{ message }}</div>
+                {% endfor %}
+              {% endif %}
+            {% endwith %}
+
+            <form method="POST" action="/registro-comprador">
+                <label>Nombre completo:</label>
+                <input type="text" name="nombre_persona" placeholder="Ej. Carlos Mendoza" required>
+
+                <label>Nombre de usuario:</label>
+                <input type="text" name="username" placeholder="Ej. cmendoza" required>
+
+                <label>Contraseña:</label>
+                <input type="password" name="password" placeholder="Mínimo 4 caracteres" required>
+
+                <button type="submit" class="btn" style="width: 100%;">Crear Cuenta de Comprador</button>
+            </form>
+
+            <p style="text-align: center; margin-top: 16px; font-size: 14px;">
+                ¿Ya tienes cuenta? <a href="/login">Inicia sesión aquí</a>
+            </p>
+        </div>
+    </div>
+</body>
+</html>

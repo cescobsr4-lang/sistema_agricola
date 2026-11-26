@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Registrar Agricultor</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <nav class="navbar">
+        <a href="/" class="logo">Sistema Agrícola ES</a>
+        <ul class="navbar-nav">
+            <li><a href="/">Inicio</a></li>
+            <li><a href="/clientes" class="active">Agricultores</a></li>
+            <li><a href="/facturas">Facturación</a></li>
+            <li><a href="/rutas">Rutas</a></li>
+        </ul>
+    </nav>
+
+    <div class="main-container" style="max-width: 600px;">
+        <div class="card">
+            <h2>Registrar Nuevo Agricultor</h2>
+            {% with messages = get_flashed_messages() %}
+              {% if messages %}
+                {% for message in messages %}
+                  <div class="success-msg">{{ message }}</div>
+                {% endfor %}
+              {% endif %}
+            {% endwith %}
+
+            <form method="POST">
+                <label>Nombre completo:</label>
+                <input type="text" name="nombre" placeholder="Ej. Juan Pérez" required>
+
+                <label>DUI:</label>
+                <input type="text" name="dui" placeholder="00000000-0" required>
+
+                <label>Teléfono:</label>
+                <input type="text" name="telefono" placeholder="7000-0000">
+
+                <label>Dirección / Cantón:</label>
+                <input type="text" name="direccion" placeholder="Ej. Cantón El Sunzal">
+
+                <button type="submit" class="btn">Guardar Agricultor</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

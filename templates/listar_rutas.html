@@ -1,22 +1,39 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% if usuario_actual and usuario_actual.es_comprador %}Mis Rutas de Entrega{% else %}Control de Rutas y GPS{% endif %} | Sistema Agrícola ES</title>
+    <title>{% if usuario_actual and usuario_actual.es_comprador %}Mis Rutas de Entrega{% else %}Control de Rutas y GPS{% endif %} | AGROTERRA SV</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
 </head>
 <body>
-    <nav class="navbar">
-        <a href="/" class="brand">Sistema Agrícola ES</a>
-        <ul class="nav-links">
-            <li><a href="/">Inicio</a></li>
+    <div class="top-strip">
+        <span>Distribución Agropecuaria Nacional · Casa Matriz Sonsonate, El Salvador</span>
+        <span>Respaldo de Crédito Agrícola, Facturación y Logística</span>
+    </div>
+
+    <nav class="corp-navbar">
+        <a href="/" class="brand-lockup">
+            <div class="brand-mark" style="background: transparent; box-shadow: none; padding: 0; overflow: hidden;">
+                <img src="{{ url_for('static', filename='logo.jpeg') }}" alt="Logo Agroterra SV" style="width: 100%; height: 100%; object-fit: cover;">
+            </div>
+            <div>
+                <div class="brand-title">AGROTERRA SV</div>
+                <div class="brand-sub">Insumos y Crédito Agrícola</div>
+            </div>
+        </a>
+
+        <ul class="corp-nav-links">
+            <li><a href="/">Catálogo</a></li>
             {% if usuario_actual and (usuario_actual.es_admin or usuario_actual.es_vendedor) %}
                 <li><a href="/clientes">Agricultores</a></li>
             {% endif %}
             <li><a href="/facturas">{% if usuario_actual and usuario_actual.es_comprador %}Mis Facturas{% else %}Facturación{% endif %}</a></li>
             <li><a href="/rutas" class="active">Rutas</a></li>
-            <li><a href="/logout" style="color:#dc2626;">Cerrar Sesión</a></li>
+            {% if usuario_actual and usuario_actual.es_admin %}
+                <li><a href="/usuarios">Usuarios</a></li>
+            {% endif %}
+            <li><a href="/logout" class="logout-link">Cerrar Sesión</a></li>
         </ul>
     </nav>
 

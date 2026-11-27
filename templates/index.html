@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
 <meta charset="UTF-8">
@@ -291,7 +291,9 @@
         display: flex;
         align-items: center;
         justify-content: center;
-        font-size: 42px;
+        font-size: 13px;
+        font-weight: 700;
+        color: var(--corp-green-dark);
         margin-bottom: 12px;
         position: relative;
         overflow: hidden;
@@ -489,7 +491,7 @@
 <body>
 
 <div class="top-strip">
-    <span>🌾 Distribución Agropecuaria Nacional · Casa Matriz Sonsonate, El Salvador</span>
+    <span>Distribución Agropecuaria Nacional · Casa Matriz Sonsonate, El Salvador</span>
     <span>Respaldo de Crédito Agrícola, Facturación y Logística</span>
 </div>
 
@@ -563,7 +565,7 @@
 
             {% if usuario_actual and usuario_actual.es_admin %}
             <div class="corp-card" style="margin-top: 16px;">
-                <h3 style="margin: 0 0 12px 0; font-size: 15px; font-weight: 800;">➕ Alta Rápida de Insumo al Catálogo (ADMIN)</h3>
+                <h3 style="margin: 0 0 12px 0; font-size: 15px; font-weight: 800;">Alta Rápida de Insumo al Catálogo (ADMIN)</h3>
                 <form method="POST" action="/catalogo/nuevo-producto" enctype="multipart/form-data" class="admin-bar-grid">
                     <div>
                         <label style="margin: 0 0 4px 0; font-size: 12px;">Nombre del insumo</label>
@@ -608,9 +610,9 @@
                                     onerror="this.style.display='none'; this.nextElementSibling.style.display='inline';"
                                     style="width: 100%; height: 100%; object-fit: contain; padding: 8px;"
                                 >
-                                <span style="display: none;">🌱</span>
+                                <span style="display: none;">Sin imagen</span>
                             {% else %}
-                                <span>🌱</span>
+                                <span>Sin imagen</span>
                             {% endif %}
                             <span class="stock-badge">Stock: {{ p.stock }}</span>
                         </div>
@@ -629,7 +631,7 @@
                     {% if usuario_actual and usuario_actual.es_admin %}
                     <details style="margin-top: 10px; border-top: 1px solid #f1f5f9; padding-top: 8px;">
                         <summary style="font-size: 12px; font-weight: 700; color: #15803d; cursor: pointer;">
-                            📷 Cambiar foto / editar
+                            Cambiar foto / editar
                         </summary>
                         <form method="POST" action="/catalogo/editar-producto/{{ p.id }}" enctype="multipart/form-data" style="margin-top: 8px; display: flex; flex-direction: column; gap: 6px;">
                             <input type="text" name="nombre" value="{{ p.nombre }}" style="margin: 0; font-size: 12px; padding: 5px;">
@@ -653,7 +655,7 @@
         <aside class="right-column">
             <div class="corp-card">
                 <div class="section-heading">
-                    <span>🧺 Carrito de Pedido</span>
+                    <span>Carrito de Pedido</span>
                     <span class="count-pill">{{ total_unidades }} und.</span>
                 </div>
 
@@ -683,7 +685,7 @@
                     {% elif usuario_actual and usuario_actual.es_comprador %}
                         <form method="POST" action="/carrito/pagar-tarjeta" class="card-pay-box" id="form-pago-comprador">
                             <div style="font-size: 12px; font-weight: 800; color: var(--corp-navy);">
-                                🚚 Envío a Domicilio (desde {{ origen_tienda }})
+                                Envío a Domicilio (desde {{ origen_tienda }})
                             </div>
 
                             <label>Zona / Municipio de entrega</label>
@@ -702,7 +704,7 @@
                             <input type="text" name="telefono_contacto" placeholder="Ej. 7000-0000">
 
                             <div style="margin-top: 10px; padding-top: 8px; border-top: 1px dashed #cbd5e1; font-size: 12px; font-weight: 800; color: var(--corp-navy);">
-                                💳 Pago con Tarjeta de Crédito
+                                Pago con Tarjeta de Crédito
                             </div>
 
                             <label>Nombre en la tarjeta</label>
@@ -747,25 +749,25 @@
                 {% if usuario_actual and (usuario_actual.es_admin or usuario_actual.es_vendedor) %}
                     <div class="module-switch">
                         <button id="btn-clientes-credito" type="button" class="module-btn active" onclick="mostrarApartado('clientes-credito')">
-                            🌾 Clientes y Crédito
+                            Clientes y Crédito
                         </button>
                         <button id="btn-facturas-rutas" type="button" class="module-btn" onclick="mostrarApartado('facturas-rutas')">
-                            🧾 Facturas y Rutas
+                            Facturas y Rutas
                         </button>
                     </div>
 
                     <div id="panel-clientes-credito" class="module-panel active">
                         <a href="/registrar-cliente" class="action-tile">
-                            <strong>➕ Registrar Agricultor</strong>
+                            <strong>Registrar Agricultor</strong>
                             <span>Alta de productores agrícolas con DUI, contacto y ubicación.</span>
                         </a>
                         <a href="/clientes" class="action-tile">
-                            <strong>👥 Padrón de Agricultores</strong>
+                            <strong>Padrón de Agricultores</strong>
                             <span>Consulta, edita o administra los clientes registrados.</span>
                         </a>
                         {% if usuario_actual.es_admin %}
                         <a href="/registrar-credito" class="action-tile">
-                            <strong>💳 Otorgar Línea de Crédito</strong>
+                            <strong>Otorgar Línea de Crédito</strong>
                             <span>Asigna montos de financiamiento agrícola por cliente.</span>
                         </a>
                         {% endif %}
@@ -773,32 +775,32 @@
 
                     <div id="panel-facturas-rutas" class="module-panel">
                         <a href="/nueva-factura" class="action-tile">
-                            <strong>🧾 Emitir Factura con Crédito</strong>
+                            <strong>Emitir Factura con Crédito</strong>
                             <span>Carga los insumos elegidos y descuenta saldo disponible.</span>
                         </a>
                         <a href="/facturas" class="action-tile">
-                            <strong>📄 Registro de Facturas</strong>
+                            <strong>Registro de Facturas</strong>
                             <span>Revisa facturas emitidas y genera comprobantes PDF.</span>
                         </a>
                         <a href="/registrar-ruta" class="action-tile">
-                            <strong>🚚 Programar Ruta de Entrega</strong>
+                            <strong>Programar Ruta de Entrega</strong>
                             <span>Asigna destino en mapa y despacho desde Sonsonate.</span>
                         </a>
                         <a href="/rutas" class="action-tile">
-                            <strong>🗺️ Control de Rutas y GPS</strong>
+                            <strong>Control de Rutas y GPS</strong>
                             <span>Monitorea entregas programadas y trayectos.</span>
                         </a>
                     </div>
 
                 {% elif usuario_actual and usuario_actual.es_comprador %}
-                    <h3 class="section-heading">📦 Portal del Comprador</h3>
+                    <h3 class="section-heading">Portal del Comprador</h3>
                     <div class="module-panel active">
                         <a href="/facturas" class="action-tile">
-                            <strong>📄 Mis Facturas y Comprobantes</strong>
+                            <strong>Mis Facturas y Comprobantes</strong>
                             <span>Consulta tus compras realizadas y descarga tus PDF.</span>
                         </a>
                         <a href="/rutas" class="action-tile">
-                            <strong>🗺️ Seguimiento de Mis Rutas</strong>
+                            <strong>Seguimiento de Mis Rutas</strong>
                             <span>Revisa el estado y ruta en Maps de tus entregas.</span>
                         </a>
                     </div>

@@ -93,7 +93,7 @@
 </head>
 <body>
     <nav class="navbar">
-        <a href="/" class="logo">🌱 Sistema Agrícola ES</a>
+        <a href="/" class="logo"> Sistema Agrícola ES</a>
         <ul class="navbar-nav">
             <li><a href="/">Inicio</a></li>
             <li><a href="/catalogo" class="active">Catálogo ({{ total_unidades }})</a></li>
@@ -117,7 +117,7 @@
 
         <div class="card">
             <div class="shop-topbar">
-                <h2 style="margin: 0;">🛒 Catálogo de Insumos Agrícolas</h2>
+                <h2 style="margin: 0;">Catálogo de Insumos Agrícolas</h2>
                 <form method="GET" action="/catalogo" class="search-box">
                     <input type="hidden" name="categoria" value="{{ categoria_actual }}">
                     <input type="text" name="q" value="{{ buscar }}" placeholder="Buscar insumo, semilla o fertilizante..." style="margin: 0;">
@@ -139,7 +139,7 @@
                 {% for p in productos %}
                 <div class="prod-card">
                     <div>
-                        <div class="prod-img-box">🌿</div>
+                        <div class="prod-img-box"></div>
                         <div class="prod-cat">{{ p.categoria }} · Stock: {{ p.stock }}</div>
                         <div class="prod-name">{{ p.nombre }}</div>
                         <div class="prod-price">${{ "%.2f"|format(p.precio) }}</div>
@@ -158,7 +158,7 @@
             </div>
 
             <div class="card">
-                <h3 style="margin-top: 0;">🧺 Carrito de Compra ({{ total_unidades }})</h3>
+                <h3 style="margin-top: 0;">Carrito de Compra ({{ total_unidades }})</h3>
                 {% if items_carrito %}
                     {% for item in items_carrito %}
                     <div style="border-bottom: 1px solid #e2e8f0; padding: 10px 0;">
